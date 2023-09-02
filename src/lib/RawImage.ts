@@ -1,9 +1,15 @@
+import { RGB } from "$lib/RGB";
+
 export class RawImage {
     constructor(
-        private readonly data: number[][][],
-        private readonly width: number,
-        private readonly height: number,
+        private readonly data: RGB[][],
+        public readonly width: number,
+        public readonly height: number,
     ) {}
+
+    get(x: number, y: number): RGB {
+        return this.data[y][x];
+    }
 
     static loadImage(source: string): RawImage | null {
         const canvas = document.createElement("canvas");
@@ -16,16 +22,15 @@ export class RawImage {
         canvas.height = img.height;
         context.drawImage(img, 0, 0);
         const rawData = context.getImageData(0, 0, img.width, img.height);
-        const alignedData: number[][][] = [];
+        const alignedData: RGB[][] = [];
         for (let y = 0; y < img.height; y++) {
             alignedData[y] = [];
             for (let x = 0; x < img.width; x++) {
                 const offset = (y * img.width + x) * 4;
-                alignedData[y][x] = [];
-                alignedData[y][x][0] = rawData.data[offset];
-                alignedData[y][x][1] = rawData.data[offset + 1];
-                alignedData[y][x][2] = rawData.data[offset + 2];
-                alignedData[y][x][3] = rawData.data[offset + 3];
+                const r = rawData.data[offset];
+                const g = rawData.data[offset + 1];
+                const b = rawData.data[offset + 2];
+                alignedData[y][x] = new RGB(r, g, b);
             }
         }
 

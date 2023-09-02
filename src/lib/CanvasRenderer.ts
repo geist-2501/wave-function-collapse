@@ -1,24 +1,15 @@
 import Two from "two.js";
+import type { RawImage } from "$lib/RawImage";
 
 export default class CanvasRenderer {
     private readonly two: Two;
 
-    private image: string[][];
-    public readonly size: number;
+    private readonly image: RawImage;
     private readonly ppi: number;
 
-    constructor(root: HTMLElement, size: number, ppi: number) {
+    constructor(root: HTMLElement, image: RawImage, ppi: number) {
         this.two = new Two({}).appendTo(root);
-        this.size = size;
         this.ppi = ppi;
-
-        const image: string[][] = [];
-        for (let y = 0; y < size; y++) {
-            image[y] = [];
-            for (let x = 0; x < size; x++) {
-                image[y][x] = "#FF8000";
-            }
-        }
 
         this.image = image;
     }
@@ -27,9 +18,8 @@ export default class CanvasRenderer {
         this.two.clear();
 
         const image = this.image;
-        const size = this.size;
-        for (let y = 0; y < size; y++) {
-            for (let x = 0; x < size; x++) {
+        for (let y = 0; y < image.height; y++) {
+            for (let x = 0; x < image.width; x++) {
                 const ppi = this.ppi;
                 const offset = ppi / 2;
                 const rect = this.two.makeRectangle(
@@ -38,18 +28,10 @@ export default class CanvasRenderer {
                     ppi,
                     ppi,
                 );
-                rect.fill = image[y][x];
+                rect.fill = image.get(x, y).toHex();
             }
         }
 
         this.two.update();
-    }
-
-    set(x: number, y: number, content: string) {
-        this.image[y][x] = content;
-    }
-
-    get(x: number, y: number) {
-        return this.image[y][x];
     }
 }
