@@ -1,4 +1,4 @@
-import { RGB } from "$lib/RGB";
+import type { RGB } from "$lib/RGB";
 
 export class RawImage {
     constructor(
@@ -7,8 +7,15 @@ export class RawImage {
         public readonly height: number,
     ) {}
 
-    get(x: number, y: number): RGB {
-        return this.data[y][x];
+    get(x: number, y: number, wrap = false): RGB {
+        let ax = x;
+        let ay = y;
+        if (wrap) {
+            ax = ((x % this.width) + this.width) % this.width;
+            ay = ((y % this.height) + this.height) % this.height;
+        }
+
+        return this.data[ay][ax];
     }
 
     static loadImage(source: string): RawImage | null {
@@ -30,10 +37,19 @@ export class RawImage {
                 const r = rawData.data[offset];
                 const g = rawData.data[offset + 1];
                 const b = rawData.data[offset + 2];
-                alignedData[y][x] = new RGB(r, g, b);
+                alignedData[y][x] = { r, g, b };
             }
         }
 
         return new RawImage(alignedData, img.width, img.height);
+    }
+
+    getAllData(): RGB[] {
+        let all: RGB[] = [];
+        for (const row of this.data) {
+            all = all.concat(row);
+        }
+
+        return all;
     }
 }

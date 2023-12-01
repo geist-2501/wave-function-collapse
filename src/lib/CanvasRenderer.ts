@@ -1,17 +1,18 @@
 import Two from "two.js";
 import type { RawImage } from "$lib/RawImage";
+import { RGBHelper } from "$lib/RGB";
 
 export default class CanvasRenderer {
     private readonly two: Two;
 
-    private readonly image: RawImage;
+    private readonly _image: RawImage;
     private readonly ppi: number;
 
     constructor(root: HTMLElement, image: RawImage, ppi: number) {
         this.two = new Two({}).appendTo(root);
         this.ppi = ppi;
 
-        this.image = image;
+        this._image = image;
     }
 
     draw() {
@@ -28,10 +29,14 @@ export default class CanvasRenderer {
                     ppi,
                     ppi,
                 );
-                rect.fill = image.get(x, y).toHex();
+                rect.fill = RGBHelper.toHex(image.get(x, y));
             }
         }
 
         this.two.update();
+    }
+
+    get image() {
+        return this._image;
     }
 }

@@ -18,6 +18,10 @@
         const mainImage = new CanvasRenderer(root, image, 10);
         wfc = new WFC(mainImage);
     });
+
+    const complete = () => {
+        wfc?.step();
+    };
 </script>
 
 <h1>WFC</h1>
@@ -26,4 +30,5 @@
 {:else}
     <img src="Dungeon.png" alt="source" id="img" />
     <div bind:this={root}></div>
+    <button on:click={complete}>Complete</button>
 {/if}

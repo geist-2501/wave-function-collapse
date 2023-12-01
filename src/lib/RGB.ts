@@ -1,14 +1,15 @@
-export class RGB {
-    constructor(
-        private r: number,
-        private g: number,
-        private b: number,
-    ) {}
+export type RGB = {
+    r: number;
+    g: number;
+    b: number;
+};
 
-    toHex(): string {
-        const hexR = RGB.pad(RGB.decToHex(this.r));
-        const hexG = RGB.pad(RGB.decToHex(this.b));
-        const hexB = RGB.pad(RGB.decToHex(this.g));
+export class RGBHelper {
+    static toHex(rgb: RGB): string {
+        const { r, g, b } = rgb;
+        const hexR = RGBHelper.pad(RGBHelper.decToHex(r));
+        const hexG = RGBHelper.pad(RGBHelper.decToHex(b));
+        const hexB = RGBHelper.pad(RGBHelper.decToHex(g));
 
         return `#${hexR}${hexB}${hexG}`;
     }
