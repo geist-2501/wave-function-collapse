@@ -17,12 +17,7 @@ export default class WFC {
         this.renderer = renderer;
         this.image = renderer.image;
 
-        // Count colours.
-        for (const pixel of renderer.image.getAllData()) {
-            if (!_.some(this.colours, pixel)) {
-                this.colours.push(pixel);
-            }
-        }
+        this.colours = WFC.countColours(this.image);
 
         // Count patterns.
         for (let x = 0; x < this.image.width; x++) {
@@ -42,6 +37,17 @@ export default class WFC {
     step() {
         // select tile with the lowest entropy.
         // collapse to a colour.
+    }
+
+    static countColours(image: RawImage): Hex[] {
+        const colours: Hex[] = [];
+        for (const pixel of image.getAllData()) {
+            if (!colours.some((it) => it === pixel)) {
+                colours.push(pixel);
+            }
+        }
+
+        return colours;
     }
 
     private getPattern(x: number, y: number): Pattern {
