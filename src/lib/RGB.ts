@@ -4,8 +4,10 @@ export type RGB = {
     b: number;
 };
 
+export type Hex = string;
+
 export class RGBHelper {
-    static toHex(rgb: RGB): string {
+    static toHex(rgb: RGB): Hex {
         const { r, g, b } = rgb;
         const hexR = RGBHelper.pad(RGBHelper.decToHex(r));
         const hexG = RGBHelper.pad(RGBHelper.decToHex(b));

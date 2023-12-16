@@ -1,13 +1,14 @@
-import type { RGB } from "$lib/RGB";
+import type { Hex, RGB } from "$lib/RGB";
+import { RGBHelper } from "$lib/RGB";
 
 export class RawImage {
     constructor(
-        private readonly data: RGB[][],
+        private readonly data: Hex[][],
         public readonly width: number,
         public readonly height: number,
     ) {}
 
-    get(x: number, y: number, wrap = false): RGB {
+    get(x: number, y: number, wrap = false): Hex {
         let ax = x;
         let ay = y;
         if (wrap) {
@@ -29,7 +30,7 @@ export class RawImage {
         canvas.height = img.height;
         context.drawImage(img, 0, 0);
         const rawData = context.getImageData(0, 0, img.width, img.height);
-        const alignedData: RGB[][] = [];
+        const alignedData: Hex[][] = [];
         for (let y = 0; y < img.height; y++) {
             alignedData[y] = [];
             for (let x = 0; x < img.width; x++) {
@@ -37,15 +38,16 @@ export class RawImage {
                 const r = rawData.data[offset];
                 const g = rawData.data[offset + 1];
                 const b = rawData.data[offset + 2];
-                alignedData[y][x] = { r, g, b };
+                const rgb: RGB = { r, g, b };
+                alignedData[y][x] = RGBHelper.toHex(rgb);
             }
         }
 
         return new RawImage(alignedData, img.width, img.height);
     }
 
-    getAllData(): RGB[] {
-        let all: RGB[] = [];
+    getAllData(): Hex[] {
+        let all: Hex[] = [];
         for (const row of this.data) {
             all = all.concat(row);
         }

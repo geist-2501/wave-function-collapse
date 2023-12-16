@@ -1,16 +1,16 @@
 import type CanvasRenderer from "$lib/CanvasRenderer";
-import type { RGB } from "$lib/RGB";
+import type { Hex } from "$lib/RGB";
 import _, { floor } from "lodash";
 import type { RawImage } from "$lib/RawImage";
 
-export type Pattern = RGB[][];
+export type Pattern = Hex[];
 
 export default class WFC {
     private readonly n = 3;
     private readonly renderer: CanvasRenderer;
     private readonly image: RawImage;
 
-    public colours: RGB[] = [];
+    public colours: Hex[] = [];
     public patterns: Pattern[] = [];
 
     constructor(renderer: CanvasRenderer) {
@@ -28,15 +28,11 @@ export default class WFC {
         for (let x = 0; x < this.image.width; x++) {
             for (let y = 0; y < this.image.height; y++) {
                 const pattern = this.getPattern(x, y);
-                console.log(pattern);
-                if (!_.some(this.patterns, pattern)) {
+                if (!this.patterns.some((it) => _.isEqual(it, pattern))) {
                     this.patterns.push(pattern);
                 }
             }
         }
-
-        console.log(`got ${this.patterns.length} unique patterns`);
-        console.log(this.image.width * this.image.height);
 
         // Wrap when sampling
 
@@ -49,17 +45,13 @@ export default class WFC {
     }
 
     private getPattern(x: number, y: number): Pattern {
-        const pattern: Pattern = Array(this.n);
+        const max = this.n * this.n;
+        const pattern: Pattern = Array(max);
         const offset = floor(this.n / 2);
-        for (let dy = 0; dy < this.n; dy++) {
-            pattern[dy] = Array(this.n);
-            for (let dx = 0; dx < this.n; dx++) {
-                pattern[dy][dx] = this.image.get(
-                    x + dx - offset,
-                    y + dy - offset,
-                    true,
-                );
-            }
+        for (let i = 0; i < max; i++) {
+            const dy = i % this.n;
+            const dx = floor(i / this.n);
+            pattern[i] = this.image.get(x + dx - offset, y + dy - offset, true);
         }
 
         return pattern;

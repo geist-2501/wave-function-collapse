@@ -29,7 +29,7 @@ export default class CanvasRenderer {
                     ppi,
                     ppi,
                 );
-                rect.fill = RGBHelper.toHex(image.get(x, y));
+                rect.fill = image.get(x, y);
             }
         }
 
