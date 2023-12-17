@@ -30,20 +30,22 @@ export class Matrix<T> {
         this.data[ay][ax] = val;
     }
 
-    min(comparator: (value: T) => number): Coord {
+    min(comparator: (value: T) => number): Coord[] {
         let minValue = comparator(this.get(0, 0));
-        let minValueCoord: Coord = { x: 0, y: 0 };
+        let minValueCoords: Coord[] = [];
         for (let y = 0; y < this.height; y++) {
             for (let x = 0; x < this.width; x++) {
                 const currentVal = comparator(this.get(x, y));
                 if (currentVal < minValue) {
                     minValue = currentVal;
-                    minValueCoord = { x, y };
+                    minValueCoords = [{ x, y }];
+                } else if (currentVal === minValue) {
+                    minValueCoords.push({ x, y });
                 }
             }
         }
 
-        return minValueCoord;
+        return minValueCoords;
     }
 
     all(predicate: (value: T) => boolean): boolean {

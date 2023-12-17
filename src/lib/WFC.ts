@@ -37,13 +37,14 @@ export default class WFC {
         }
 
         // select tile with the lowest entropy.
-        const nextCoord = this.entropy.min((cell) => {
+        const nextCoords = this.entropy.min((cell) => {
             if (typeof cell === "number") {
                 return cell;
             } else {
                 return this.maxEntropy;
             }
         });
+        const nextCoord = nextCoords[random(nextCoords.length - 1)];
 
         // randomly choose the center colour of a compatible pattern.
         const patterns = this.getCompatiblePatterns(nextCoord);
