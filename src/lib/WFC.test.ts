@@ -3,27 +3,6 @@ import { Matrix } from "./Matrix";
 import type { Hex } from "./RGB";
 
 describe("WFC", () => {
-    it("should count colours", () => {
-        const imageData = [
-            ["#ff", "#ff", "#00"],
-            ["#ff", "#11", "#ff"],
-            ["#22", "#ff", "#ff"],
-        ];
-        const mockImage = new Matrix<Hex>(
-            imageData,
-            imageData.length,
-            imageData.length,
-        );
-        const wfc = new WFC(mockImage);
-
-        const result = wfc.countColours();
-
-        expect(result.length).toBe(4);
-        expect(result).toContain("#ff");
-        expect(result).toContain("#00");
-        expect(result).toContain("#11");
-        expect(result).toContain("#22");
-    });
     it("should count patterns (2x2)", () => {
         const imageData = [
             ["A", "B"],

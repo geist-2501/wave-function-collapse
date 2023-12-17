@@ -11,14 +11,12 @@ export default class WFC {
     private readonly baseEntropy: number;
     private readonly maxEntropy: number;
 
-    public colours: Hex[] = [];
     public patterns: Pattern[] = [];
     public entropy: Matrix<Hex | number>;
 
     constructor(image: Matrix<Hex>) {
         this.image = image;
 
-        this.colours = this.countColours();
         this.patterns = this.countPatterns();
 
         this.baseEntropy = this.patterns.length;
@@ -114,17 +112,6 @@ export default class WFC {
 
     getEntropy(coord: Coord): number {
         return this.getCompatiblePatterns(coord).length;
-    }
-
-    countColours(): Hex[] {
-        const colours: Hex[] = [];
-        for (const pixel of this.image.getAllData()) {
-            if (!colours.some((it) => it === pixel)) {
-                colours.push(pixel);
-            }
-        }
-
-        return colours;
     }
 
     countPatterns(): Pattern[] {
