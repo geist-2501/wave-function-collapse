@@ -2,31 +2,15 @@ import type { Hex, RGB } from "$lib/RGB";
 import { RGBHelper } from "$lib/RGB";
 import { Matrix } from "$lib/Matrix";
 
-export class RawImage {
-    readonly matrix: Matrix<Hex>;
-
-    get width(): number {
-        return this.matrix.width;
-    }
-
-    get height(): number {
-        return this.matrix.height;
-    }
-
-    constructor(data: Hex[][], width: number, height: number) {
-        this.matrix = new Matrix<Hex>(data, width, height);
-    }
-
-    get(x: number, y: number, wrap = false): Hex {
-        return this.matrix.get(x, y, wrap);
-    }
-
-    static loadImage(source: string): RawImage | null {
+export class ImageLoader {
+    static loadImage(source: string): Matrix<Hex> {
         const canvas = document.createElement("canvas");
         const context = canvas.getContext("2d");
+
         if (context === null) {
-            return null;
+            throw new Error("Could not create 2d context to load image");
         }
+
         const img = document.getElementById(source) as HTMLImageElement;
         canvas.width = img.width;
         canvas.height = img.height;
@@ -45,15 +29,6 @@ export class RawImage {
             }
         }
 
-        return new RawImage(alignedData, img.width, img.height);
-    }
-
-    getAllData(): Hex[] {
-        let all: Hex[] = [];
-        for (const row of this.matrix.data) {
-            all = all.concat(row);
-        }
-
-        return all;
+        return new Matrix<Hex>(alignedData, img.width, img.height);
     }
 }

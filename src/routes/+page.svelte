@@ -2,26 +2,30 @@
     import WFC from "$lib/WFC";
     import { onMount } from "svelte";
     import CanvasRenderer from "$lib/CanvasRenderer";
-    import { RawImage } from "$lib/RawImage";
+    import { ImageLoader } from "$lib/ImageLoader";
 
     let root: HTMLElement;
     let wfc: WFC | null = null;
     let error: string | null = null;
     let renderer: CanvasRenderer | null = null;
     onMount(() => {
-        const image = RawImage.loadImage("img");
+        renderer = new CanvasRenderer(root, 10);
 
-        if (image == null) {
-            error = "Couldn't load image";
-            return;
+        try {
+            const image = ImageLoader.loadImage("img");
+            wfc = new WFC(image);
+            renderer.draw(image);
+        } catch (e) {
+            error = "Could not load image";
         }
-
-        renderer = new CanvasRenderer(root, image, 10);
-        wfc = new WFC(image);
     });
 
     const complete = () => {
-        wfc?.step();
+        if (wfc && renderer) {
+            wfc.step();
+            const image = wfc.getImage();
+            renderer.draw(image);
+        }
     };
 </script>
 

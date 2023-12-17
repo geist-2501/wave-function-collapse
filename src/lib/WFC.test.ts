@@ -1,5 +1,6 @@
-import { RawImage } from "$lib/RawImage";
 import WFC from "$lib/WFC";
+import { Matrix } from "./Matrix";
+import type { Hex } from "./RGB";
 
 describe("WFC", () => {
     it("should count colours", () => {
@@ -8,7 +9,7 @@ describe("WFC", () => {
             ["#ff", "#11", "#ff"],
             ["#22", "#ff", "#ff"],
         ];
-        const mockImage = new RawImage(
+        const mockImage = new Matrix<Hex>(
             imageData,
             imageData.length,
             imageData.length,
@@ -28,7 +29,7 @@ describe("WFC", () => {
             ["A", "B"],
             ["A", "A"],
         ];
-        const mockImage = new RawImage(
+        const mockImage = new Matrix<Hex>(
             imageData,
             imageData.length,
             imageData.length,
@@ -88,7 +89,7 @@ describe("WFC", () => {
             ["A", "A", "A"],
             ["A", "A", "A"],
         ];
-        const mockImage = new RawImage(
+        const mockImage = new Matrix<Hex>(
             imageData,
             imageData.length,
             imageData.length,
@@ -115,7 +116,7 @@ describe("WFC", () => {
             ["A", "C", "A"],
             ["A", "A", "A"],
         ];
-        const mockImage = new RawImage(
+        const mockImage = new Matrix<Hex>(
             imageData,
             imageData.length,
             imageData.length,
@@ -135,7 +136,7 @@ describe("WFC", () => {
             ["A", "C", "A"],
             ["A", "A", "A"],
         ];
-        const mockImage = new RawImage(
+        const mockImage = new Matrix<Hex>(
             imageData,
             imageData.length,
             imageData.length,
@@ -150,7 +151,7 @@ describe("WFC", () => {
                 ["A", "B"],
                 ["A", "A"],
             ];
-            const mockImage = new RawImage(
+            const mockImage = new Matrix<Hex>(
                 imageData,
                 imageData.length,
                 imageData.length,
@@ -164,7 +165,7 @@ describe("WFC", () => {
                 ["A", "B"],
                 ["A", "A"],
             ];
-            const mockImage = new RawImage(
+            const mockImage = new Matrix<Hex>(
                 imageData,
                 imageData.length,
                 imageData.length,

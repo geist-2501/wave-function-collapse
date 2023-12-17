@@ -90,4 +90,13 @@ export class Matrix<T> {
             func(coord, cell);
         }
     }
+
+    getAllData(): T[] {
+        let all: T[] = [];
+        for (const row of this.data) {
+            all = all.concat(row);
+        }
+
+        return all;
+    }
 }

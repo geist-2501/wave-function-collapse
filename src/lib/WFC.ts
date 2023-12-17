@@ -1,6 +1,5 @@
 import type { Hex } from "$lib/RGB";
 import _, { random } from "lodash";
-import type { RawImage } from "$lib/RawImage";
 import { Matrix } from "$lib/Matrix";
 import type { Coord } from "$lib/Coord";
 
@@ -8,7 +7,7 @@ export type Pattern = Hex[];
 
 export default class WFC {
     private readonly n = 3;
-    private readonly image: RawImage;
+    private readonly image: Matrix<Hex>;
     private readonly baseEntropy: number;
     private readonly maxEntropy: number;
 
@@ -16,7 +15,7 @@ export default class WFC {
     public patterns: Pattern[] = [];
     public entropy: Matrix<Hex | number>;
 
-    constructor(image: RawImage) {
+    constructor(image: Matrix<Hex>) {
         this.image = image;
 
         this.colours = this.countColours();
@@ -61,9 +60,27 @@ export default class WFC {
         // update the entropy values of neighbouring cells. Wrapping doesn't matter.
         this.entropy.iterateN(this.n, nextCoord, (c, cell) => {
             if (typeof cell === "number") {
-                this.entropy.set(c.x, c.y, this.getEntropy(c));
+                this.entropy.set(c.x, c.y, this.getEntropy(c), true);
             }
         });
+    }
+
+    getImage(): Matrix<Hex> {
+        const dataCopy = this.entropy.data.map((row) =>
+            row.map((cell) => {
+                if (typeof cell === "number") {
+                    return "#5f7fe8";
+                } else {
+                    return cell;
+                }
+            }),
+        );
+
+        return new Matrix<Hex>(
+            dataCopy,
+            this.entropy.width,
+            this.entropy.height,
+        );
     }
 
     getCompatiblePatterns(coord: Coord): Pattern[] {
@@ -125,7 +142,7 @@ export default class WFC {
 
     getPattern(x: number, y: number): Pattern {
         const pattern: Pattern = [];
-        this.image.matrix.iterateN(this.n, { x, y }, (coord, cell) => {
+        this.image.iterateN(this.n, { x, y }, (coord, cell) => {
             pattern.push(cell);
         });
 

@@ -1,24 +1,19 @@
 import Two from "two.js";
-import type { RawImage } from "$lib/RawImage";
-import { RGBHelper } from "$lib/RGB";
+import type { Matrix } from "$lib/Matrix";
+import type { Hex } from "./RGB";
 
 export default class CanvasRenderer {
     private readonly two: Two;
-
-    private readonly _image: RawImage;
     private readonly ppi: number;
 
-    constructor(root: HTMLElement, image: RawImage, ppi: number) {
+    constructor(root: HTMLElement, ppi: number) {
         this.two = new Two({}).appendTo(root);
         this.ppi = ppi;
-
-        this._image = image;
     }
 
-    draw() {
+    draw(image: Matrix<Hex>) {
         this.two.clear();
 
-        const image = this.image;
         for (let y = 0; y < image.height; y++) {
             for (let x = 0; x < image.width; x++) {
                 const ppi = this.ppi;
@@ -34,9 +29,5 @@ export default class CanvasRenderer {
         }
 
         this.two.update();
-    }
-
-    get image() {
-        return this._image;
     }
 }
