@@ -1,5 +1,5 @@
 import type { Hex } from "$lib/RGB";
-import _ from "lodash";
+import _, { random } from "lodash";
 import type { RawImage } from "$lib/RawImage";
 import { Matrix } from "$lib/Matrix";
 import type { Coord } from "$lib/Coord";
@@ -9,6 +9,8 @@ export type Pattern = Hex[];
 export default class WFC {
     private readonly n = 3;
     private readonly image: RawImage;
+    private readonly baseEntropy: number;
+    private readonly maxEntropy: number;
 
     public colours: Hex[] = [];
     public patterns: Pattern[] = [];
@@ -20,24 +22,55 @@ export default class WFC {
         this.colours = this.countColours();
         this.patterns = this.countPatterns();
 
-        // initialise the entropy array to equal the number of patterns.
-        this.entropy = Matrix.initialise<Hex | number>(this.patterns.length, image.width, image.height);
+        this.baseEntropy = this.patterns.length;
+        this.maxEntropy = this.baseEntropy + 1;
+        this.entropy = Matrix.initialise<Hex | number>(
+            this.baseEntropy,
+            image.width,
+            image.height,
+        );
     }
 
     step() {
-        // select tile with the lowest entropy.
-        // randomly choose the center colour of a compatible pattern (setting entropy to 0).
-        // update the entropy values of neighbouring cells. Wrapping doesn't matter.
-        // repeat until all entropy is equal to 0.
+        if (this.entropy.all((cell) => typeof cell === "string")) {
+            console.log("No more cells to collapse");
+            return;
+        }
 
-        // pattern compatibility just means it fits with collapsed neighbour cells.
+        // select tile with the lowest entropy.
+        const nextCoord = this.entropy.min((cell) => {
+            if (typeof cell === "number") {
+                return cell;
+            } else {
+                return this.maxEntropy;
+            }
+        });
+
+        // randomly choose the center colour of a compatible pattern.
+        const patterns = this.getCompatiblePatterns(nextCoord);
+        if (patterns.length === 0) {
+            console.log("No more matching patterns");
+            return;
+        }
+
+        const selectedPattern = patterns[random(patterns.length - 1)];
+        const centerColour = selectedPattern[Math.floor((this.n * this.n) / 2)];
+
+        this.entropy.set(nextCoord.x, nextCoord.y, centerColour);
+
+        // update the entropy values of neighbouring cells. Wrapping doesn't matter.
+        this.entropy.iterateN(this.n, nextCoord, (c, cell) => {
+            if (typeof cell === "number") {
+                this.entropy.set(c.x, c.y, this.getEntropy(c));
+            }
+        });
     }
 
-    getEntropy(coord: Coord): number {
-        let entropy = 0;
+    getCompatiblePatterns(coord: Coord): Pattern[] {
+        const compatiblePatterns: Pattern[] = [];
         const constraints: (Hex | null)[] = [];
         this.entropy.iterateN(this.n, coord, (c, cell) => {
-            if (typeof(cell) === 'string') {
+            if (typeof cell === "string") {
                 constraints.push(cell);
             } else {
                 constraints.push(null);
@@ -54,11 +87,15 @@ export default class WFC {
             });
 
             if (patternFits) {
-                entropy += 1;
+                compatiblePatterns.push(pattern);
             }
         }
 
-        return entropy;
+        return compatiblePatterns;
+    }
+
+    getEntropy(coord: Coord): number {
+        return this.getCompatiblePatterns(coord).length;
     }
 
     countColours(): Hex[] {
@@ -88,7 +125,7 @@ export default class WFC {
 
     getPattern(x: number, y: number): Pattern {
         const pattern: Pattern = [];
-        this.image.matrix.iterateN(this.n, {x, y}, (coord, cell) => {
+        this.image.matrix.iterateN(this.n, { x, y }, (coord, cell) => {
             pattern.push(cell);
         });
 
