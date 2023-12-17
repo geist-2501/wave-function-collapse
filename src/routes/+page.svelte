@@ -7,6 +7,7 @@
     let root: HTMLElement;
     let wfc: WFC | null = null;
     let error: string | null = null;
+    let renderer: CanvasRenderer | null = null;
     onMount(() => {
         const image = RawImage.loadImage("img");
 
@@ -15,8 +16,8 @@
             return;
         }
 
-        const mainImage = new CanvasRenderer(root, image, 10);
-        wfc = new WFC(mainImage);
+        renderer = new CanvasRenderer(root, image, 10);
+        wfc = new WFC(image);
     });
 
     const complete = () => {

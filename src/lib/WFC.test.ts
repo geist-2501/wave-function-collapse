@@ -13,13 +13,40 @@ describe("WFC", () => {
             imageData.length,
             imageData.length,
         );
+        const wfc = new WFC(mockImage);
 
-        const result = WFC.countColours(mockImage);
+        const result = wfc.countColours();
 
         expect(result.length).toBe(4);
         expect(result).toContain("#ff");
         expect(result).toContain("#00");
         expect(result).toContain("#11");
         expect(result).toContain("#22");
+    });
+    it("should count patterns", () => {
+        const imageData = [
+            ["#ff", "#ff", "#00"],
+            ["#ff", "#11", "#ff"],
+            ["#ff", "#ff", "#ff"],
+        ];
+        const mockImage = new RawImage(
+            imageData,
+            imageData.length,
+            imageData.length,
+        );
+        const wfc = new WFC(mockImage);
+
+        const result = wfc.countPatterns();
+        expect(result).toContain([
+            "#ff",
+            "#ff",
+            "#00",
+            "#ff",
+            "#11",
+            "#ff",
+            "#ff",
+            "#ff",
+            "#ff",
+        ]);
     });
 });

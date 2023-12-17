@@ -1,4 +1,3 @@
-import type CanvasRenderer from "$lib/CanvasRenderer";
 import type { Hex } from "$lib/RGB";
 import _, { floor } from "lodash";
 import type { RawImage } from "$lib/RawImage";
@@ -7,31 +6,18 @@ export type Pattern = Hex[];
 
 export default class WFC {
     private readonly n = 3;
-    private readonly renderer: CanvasRenderer;
     private readonly image: RawImage;
 
     public colours: Hex[] = [];
     public patterns: Pattern[] = [];
 
-    constructor(renderer: CanvasRenderer) {
-        this.renderer = renderer;
-        this.image = renderer.image;
+    constructor(image: RawImage) {
+        this.image = image;
 
-        this.colours = WFC.countColours(this.image);
-
-        // Count patterns.
-        for (let x = 0; x < this.image.width; x++) {
-            for (let y = 0; y < this.image.height; y++) {
-                const pattern = this.getPattern(x, y);
-                if (!this.patterns.some((it) => _.isEqual(it, pattern))) {
-                    this.patterns.push(pattern);
-                }
-            }
-        }
+        this.colours = this.countColours();
+        this.patterns = this.countPatterns();
 
         // Wrap when sampling
-
-        renderer.draw();
     }
 
     step() {
@@ -39,15 +25,29 @@ export default class WFC {
         // collapse to a colour.
     }
 
-    static countColours(image: RawImage): Hex[] {
+    countColours(): Hex[] {
         const colours: Hex[] = [];
-        for (const pixel of image.getAllData()) {
+        for (const pixel of this.image.getAllData()) {
             if (!colours.some((it) => it === pixel)) {
                 colours.push(pixel);
             }
         }
 
         return colours;
+    }
+
+    countPatterns(): Pattern[] {
+        const patterns: Pattern[] = [];
+        for (let y = 0; y < this.image.width; y++) {
+            for (let x = 0; x < this.image.height; x++) {
+                const pattern = this.getPattern(x, y);
+                if (!patterns.some((it) => _.isEqual(it, pattern))) {
+                    patterns.push(pattern);
+                }
+            }
+        }
+
+        return patterns;
     }
 
     private getPattern(x: number, y: number): Pattern {
