@@ -82,43 +82,43 @@ describe("WFC", () => {
             "A",
         ]);
     });
-    it('should count patterns when there is only 1 unique pattern (3x3)', function () {
+    it("should count patterns when there is only 1 unique pattern (3x3)", function () {
         const imageData = [
             ["A", "A", "A"],
             ["A", "A", "A"],
             ["A", "A", "A"],
         ];
         const mockImage = new RawImage(
-          imageData,
-          imageData.length,
-          imageData.length,
+            imageData,
+            imageData.length,
+            imageData.length,
         );
         const wfc = new WFC(mockImage);
 
         const result = wfc.countPatterns();
         expect(result.length).toBe(1);
         expect(result).toContainEqual([
-          "A",
-          "A",
-          "A",
-          "A",
-          "A",
-          "A",
-          "A",
-          "A",
-          "A",
+            "A",
+            "A",
+            "A",
+            "A",
+            "A",
+            "A",
+            "A",
+            "A",
+            "A",
         ]);
     });
-    it('should count patterns (3x3)', function () {
+    it("should count patterns (3x3)", function () {
         const imageData = [
             ["A", "A", "B"],
             ["A", "C", "A"],
             ["A", "A", "A"],
         ];
         const mockImage = new RawImage(
-          imageData,
-          imageData.length,
-          imageData.length,
+            imageData,
+            imageData.length,
+            imageData.length,
         );
         const wfc = new WFC(mockImage);
 
@@ -129,19 +129,19 @@ describe("WFC", () => {
         expect(result).toContainEqual([..."BAAAACAAA"]);
         expect(result).toContainEqual([..."AABACAAAA"]);
     });
-    it('should gets single pattern', () => {
+    it("should gets single pattern", () => {
         const imageData = [
             ["A", "A", "B"],
             ["A", "C", "A"],
             ["A", "A", "A"],
         ];
         const mockImage = new RawImage(
-          imageData,
-          imageData.length,
-          imageData.length,
+            imageData,
+            imageData.length,
+            imageData.length,
         );
         const wfc = new WFC(mockImage);
-        const result = wfc.getPattern(0, 0)
-        expect(result).toEqual([..."AAABAAAAC"])
+        const result = wfc.getPattern(0, 0);
+        expect(result).toEqual([..."AAABAAAAC"]);
     });
 });

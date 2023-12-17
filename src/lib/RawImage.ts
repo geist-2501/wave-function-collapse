@@ -1,9 +1,10 @@
 import type { Hex, RGB } from "$lib/RGB";
 import { RGBHelper } from "$lib/RGB";
-import {Matrix} from "$lib/Matrix";
+import { Matrix } from "$lib/Matrix";
 
 export class RawImage {
     readonly matrix: Matrix<Hex>;
+
     get width(): number {
         return this.matrix.width;
     }
@@ -12,12 +13,8 @@ export class RawImage {
         return this.matrix.height;
     }
 
-    constructor(
-        data: Hex[][],
-        width: number,
-        height: number,
-    ) {
-        this.matrix = new Matrix<Hex>(data, width, height)
+    constructor(data: Hex[][], width: number, height: number) {
+        this.matrix = new Matrix<Hex>(data, width, height);
     }
 
     get(x: number, y: number, wrap = false): Hex {

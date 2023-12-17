@@ -1,8 +1,8 @@
-import type {Hex} from "$lib/RGB";
-import _, {floor} from "lodash";
-import type {RawImage} from "$lib/RawImage";
-import {Matrix} from "$lib/Matrix";
-import type {Coord} from "$lib/Coord";
+import type { Hex } from "$lib/RGB";
+import _ from "lodash";
+import type { RawImage } from "$lib/RawImage";
+import { Matrix } from "$lib/Matrix";
+import type { Coord } from "$lib/Coord";
 
 export type Pattern = Hex[];
 
