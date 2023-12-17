@@ -1,6 +1,8 @@
-import type { Hex } from "$lib/RGB";
-import _, { floor } from "lodash";
-import type { RawImage } from "$lib/RawImage";
+import type {Hex} from "$lib/RGB";
+import _, {floor} from "lodash";
+import type {RawImage} from "$lib/RawImage";
+import {Matrix} from "$lib/Matrix";
+import type {Coord} from "$lib/Coord";
 
 export type Pattern = Hex[];
 
@@ -10,6 +12,7 @@ export default class WFC {
 
     public colours: Hex[] = [];
     public patterns: Pattern[] = [];
+    public entropy: Matrix<Hex | number>;
 
     constructor(image: RawImage) {
         this.image = image;
@@ -17,12 +20,45 @@ export default class WFC {
         this.colours = this.countColours();
         this.patterns = this.countPatterns();
 
-        // Wrap when sampling
+        // initialise the entropy array to equal the number of patterns.
+        this.entropy = Matrix.initialise<Hex | number>(this.patterns.length, image.width, image.height);
     }
 
     step() {
         // select tile with the lowest entropy.
-        // collapse to a colour.
+        // randomly choose the center colour of a compatible pattern (setting entropy to 0).
+        // update the entropy values of neighbouring cells. Wrapping doesn't matter.
+        // repeat until all entropy is equal to 0.
+
+        // pattern compatibility just means it fits with collapsed neighbour cells.
+    }
+
+    getEntropy(coord: Coord): number {
+        let entropy = 0;
+        const constraints: (Hex | null)[] = [];
+        this.entropy.iterateN(this.n, coord, (c, cell) => {
+            if (typeof(cell) === 'string') {
+                constraints.push(cell);
+            } else {
+                constraints.push(null);
+            }
+        });
+
+        for (const pattern of this.patterns) {
+            let patternFits = true;
+            pattern.forEach((cell, idx) => {
+                const constraint = constraints[idx];
+                if (constraint) {
+                    patternFits &&= cell === constraint;
+                }
+            });
+
+            if (patternFits) {
+                entropy += 1;
+            }
+        }
+
+        return entropy;
     }
 
     countColours(): Hex[] {
@@ -51,14 +87,10 @@ export default class WFC {
     }
 
     getPattern(x: number, y: number): Pattern {
-        const max = this.n * this.n;
-        const pattern: Pattern = Array(max);
-        const offset = floor(this.n / 2);
-        for (let i = 0; i < max; i++) {
-            const dx = i % this.n;
-            const dy = floor(i / this.n);
-            pattern[i] = this.image.get(x + dx - offset, y + dy - offset, true);
-        }
+        const pattern: Pattern = [];
+        this.image.matrix.iterateN(this.n, {x, y}, (coord, cell) => {
+            pattern.push(cell);
+        });
 
         return pattern;
     }

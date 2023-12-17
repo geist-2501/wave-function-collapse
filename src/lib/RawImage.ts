@@ -1,22 +1,27 @@
 import type { Hex, RGB } from "$lib/RGB";
 import { RGBHelper } from "$lib/RGB";
+import {Matrix} from "$lib/Matrix";
 
 export class RawImage {
+    readonly matrix: Matrix<Hex>;
+    get width(): number {
+        return this.matrix.width;
+    }
+
+    get height(): number {
+        return this.matrix.height;
+    }
+
     constructor(
-        private readonly data: Hex[][],
-        public readonly width: number,
-        public readonly height: number,
-    ) {}
+        data: Hex[][],
+        width: number,
+        height: number,
+    ) {
+        this.matrix = new Matrix<Hex>(data, width, height)
+    }
 
     get(x: number, y: number, wrap = false): Hex {
-        let ax = x;
-        let ay = y;
-        if (wrap) {
-            ax = ((x % this.width) + this.width) % this.width;
-            ay = ((y % this.height) + this.height) % this.height;
-        }
-
-        return this.data[ay][ax];
+        return this.matrix.get(x, y, wrap);
     }
 
     static loadImage(source: string): RawImage | null {
@@ -48,7 +53,7 @@ export class RawImage {
 
     getAllData(): Hex[] {
         let all: Hex[] = [];
-        for (const row of this.data) {
+        for (const row of this.matrix.data) {
             all = all.concat(row);
         }
 
