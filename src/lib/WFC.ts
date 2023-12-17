@@ -38,8 +38,8 @@ export default class WFC {
 
     countPatterns(): Pattern[] {
         const patterns: Pattern[] = [];
-        for (let y = 0; y < this.image.width; y++) {
-            for (let x = 0; x < this.image.height; x++) {
+        for (let x = 0; x < this.image.width; x++) {
+            for (let y = 0; y < this.image.height; y++) {
                 const pattern = this.getPattern(x, y);
                 if (!patterns.some((it) => _.isEqual(it, pattern))) {
                     patterns.push(pattern);
@@ -50,13 +50,13 @@ export default class WFC {
         return patterns;
     }
 
-    private getPattern(x: number, y: number): Pattern {
+    getPattern(x: number, y: number): Pattern {
         const max = this.n * this.n;
         const pattern: Pattern = Array(max);
         const offset = floor(this.n / 2);
         for (let i = 0; i < max; i++) {
-            const dy = i % this.n;
-            const dx = floor(i / this.n);
+            const dx = i % this.n;
+            const dy = floor(i / this.n);
             pattern[i] = this.image.get(x + dx - offset, y + dy - offset, true);
         }
 
