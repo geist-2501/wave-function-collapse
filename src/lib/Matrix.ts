@@ -19,6 +19,17 @@ export class Matrix<T> {
         return this.data[ay][ax];
     }
 
+    set(x: number, y: number, val: T, wrap = false) {
+        let ax = x;
+        let ay = y;
+        if (wrap) {
+            ax = ((x % this.width) + this.width) % this.width;
+            ay = ((y % this.height) + this.height) % this.height;
+        }
+
+        this.data[ay][ax] = val;
+    }
+
     static initialise<V>(
         initialValue: V,
         width: number,

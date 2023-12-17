@@ -144,4 +144,35 @@ describe("WFC", () => {
         const result = wfc.getPattern(0, 0);
         expect(result).toEqual([..."AAABAAAAC"]);
     });
+    describe("entropy", () => {
+        it("should get base entropy", () => {
+            const imageData = [
+                ["A", "B"],
+                ["A", "A"],
+            ];
+            const mockImage = new RawImage(
+                imageData,
+                imageData.length,
+                imageData.length,
+            );
+            const wfc = new WFC(mockImage);
+            const entropy = wfc.getEntropy({ x: 0, y: 0 });
+            expect(entropy).toBe(4);
+        });
+        it("should get entropy when constrained", () => {
+            const imageData = [
+                ["A", "B"],
+                ["A", "A"],
+            ];
+            const mockImage = new RawImage(
+                imageData,
+                imageData.length,
+                imageData.length,
+            );
+            const wfc = new WFC(mockImage);
+            wfc.entropy.set(1, 0, "B");
+            const entropy = wfc.getEntropy({ x: 0, y: 0 });
+            expect(entropy).toBe(1);
+        });
+    });
 });
