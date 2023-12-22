@@ -2,8 +2,7 @@ import type { Hex } from "$lib/RGB";
 import _, { random } from "lodash";
 import { Matrix } from "$lib/Matrix";
 import type { Coord } from "$lib/Coord";
-
-export type Pattern = Hex[];
+import type { Pattern } from "$lib/Pattern";
 
 export default class WFC {
     private readonly n = 3;
@@ -122,6 +121,7 @@ export default class WFC {
                 if (!patterns.some((it) => _.isEqual(it, pattern))) {
                     patterns.push(pattern);
                 }
+                // Flip, rotate patterns.
             }
         }
 
