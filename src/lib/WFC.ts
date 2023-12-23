@@ -19,7 +19,7 @@ export default class WFC {
 
     public randomResolve: boolean = false;
 
-    constructor(image: Matrix<Hex>) {
+    constructor(image: Matrix<Hex>, width: number = 40, height: number = 40) {
         this.image = image;
 
         this.patterns = this.countPatterns();
@@ -29,8 +29,8 @@ export default class WFC {
         this.maxEntropy = this.baseEntropy + 1;
         this.entropy = Matrix.initialise<Hex | number>(
             this.baseEntropy,
-            image.width,
-            image.height,
+            width,
+            height,
         );
     }
 
