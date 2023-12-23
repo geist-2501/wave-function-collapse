@@ -72,6 +72,10 @@ export default class WFC {
         });
     }
 
+    getDebugImage(): Matrix<Hex | number> {
+        return this.entropy;
+    }
+
     getImage(): Matrix<Hex> {
         const dataCopy = this.entropy.data.map((row) =>
             row.map((cell) => {

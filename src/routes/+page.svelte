@@ -1,7 +1,7 @@
 <script lang="ts">
   import WFC from "$lib/WFC";
   import {onMount} from "svelte";
-  import CanvasRenderer from "$lib/CanvasRenderer";
+  import CanvasRenderer, {debugRenderFunc} from "$lib/CanvasRenderer";
   import {ImageLoader} from "$lib/ImageLoader";
 
   let root: HTMLElement;
@@ -9,7 +9,7 @@
   let error: string | null = null;
   let renderer: CanvasRenderer | null = null;
   onMount(() => {
-    renderer = new CanvasRenderer(root, 10);
+    renderer = new CanvasRenderer(root, 30, debugRenderFunc);
 
     try {
       const image = ImageLoader.loadImage("img");
@@ -23,7 +23,7 @@
   const step = () => {
     if (wfc && renderer) {
       wfc.step();
-      const image = wfc.getImage();
+      const image = wfc.getDebugImage();
       renderer.draw(image);
     }
   };
