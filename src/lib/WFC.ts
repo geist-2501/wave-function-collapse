@@ -12,14 +12,18 @@ export default class WFC {
     private readonly maxEntropy: number;
 
     public patterns: Pattern[] = [];
+    public colours: Hex[] = [];
     public entropy: Matrix<Hex | number>;
 
     public halted: boolean = false;
+
+    public randomResolve: boolean = false;
 
     constructor(image: Matrix<Hex>) {
         this.image = image;
 
         this.patterns = this.countPatterns();
+        this.colours = this.countColours();
 
         this.baseEntropy = this.patterns.length;
         this.maxEntropy = this.baseEntropy + 1;
@@ -54,15 +58,25 @@ export default class WFC {
         // randomly choose the center colour of a compatible pattern.
         const patterns = this.getCompatiblePatterns(nextCoord);
         if (patterns.length === 0) {
-            console.log("No more matching patterns");
-            this.halted = true;
-            return;
+            if (this.randomResolve) {
+                console.log(
+                    "No more matching patterns, randomly resolving to a colour",
+                );
+                const randomColour =
+                    this.colours[random(this.colours.length - 1)];
+                this.entropy.set(nextCoord.x, nextCoord.y, randomColour);
+            } else {
+                console.log("No more matching patterns");
+                this.halted = true;
+                return;
+            }
+        } else {
+            const selectedPattern = patterns[random(patterns.length - 1)];
+            const centerColour =
+                selectedPattern[Math.floor((this.n * this.n) / 2)];
+
+            this.entropy.set(nextCoord.x, nextCoord.y, centerColour);
         }
-
-        const selectedPattern = patterns[random(patterns.length - 1)];
-        const centerColour = selectedPattern[Math.floor((this.n * this.n) / 2)];
-
-        this.entropy.set(nextCoord.x, nextCoord.y, centerColour);
 
         // update the entropy values of neighbouring cells. Wrapping doesn't matter.
         this.entropy.iterateN(this.n, nextCoord, (c, cell) => {
@@ -158,5 +172,16 @@ export default class WFC {
         });
 
         return pattern;
+    }
+
+    countColours(): Hex[] {
+        const colours: Hex[] = [];
+        for (const pixel of this.image.getAllData()) {
+            if (!colours.some((it) => it === pixel)) {
+                colours.push(pixel);
+            }
+        }
+
+        return colours;
     }
 }

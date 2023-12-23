@@ -14,6 +14,7 @@
     try {
       const image = ImageLoader.loadImage("img");
       wfc = new WFC(image);
+      wfc.randomResolve = true;
       renderer.draw(image);
     } catch (e) {
       error = "Could not load image";
@@ -46,7 +47,7 @@
 {#if error}
     <p>An error occurred: {error}</p>
 {:else}
-    <img src="Dungeon.png" alt="source" id="img"/>
+    <img src="Town.png" alt="source" id="img"/>
     <div bind:this={root}></div>
     <button on:click={step}>Step</button>
     <button on:click={complete}>Complete</button>
