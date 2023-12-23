@@ -1,5 +1,5 @@
 import type { Hex } from "$lib/RGB";
-import _, { random } from "lodash";
+import { random } from "lodash";
 import { Matrix } from "$lib/Matrix";
 import type { Coord } from "$lib/Coord";
 import type { Pattern } from "$lib/Pattern";
