@@ -143,9 +143,7 @@ export default class WFC {
                 variations.push(reflect(variations[6], this.n));
 
                 for (const variation of variations) {
-                    if (!allPatterns.some((it) => _.isEqual(it, variation))) {
-                        allPatterns.push(variation);
-                    }
+                    allPatterns.push(variation);
                 }
             }
         }
