@@ -3,6 +3,7 @@ import _, { random } from "lodash";
 import { Matrix } from "$lib/Matrix";
 import type { Coord } from "$lib/Coord";
 import type { Pattern } from "$lib/Pattern";
+import { reflect, rotate } from "$lib/Pattern";
 
 export default class WFC {
     private readonly n = 3;
@@ -12,6 +13,8 @@ export default class WFC {
 
     public patterns: Pattern[] = [];
     public entropy: Matrix<Hex | number>;
+
+    public halted: boolean = false;
 
     constructor(image: Matrix<Hex>) {
         this.image = image;
@@ -28,8 +31,13 @@ export default class WFC {
     }
 
     step() {
+        if (this.halted) {
+            return;
+        }
+
         if (this.entropy.all((cell) => typeof cell === "string")) {
             console.log("No more cells to collapse");
+            this.halted = true;
             return;
         }
 
@@ -47,6 +55,7 @@ export default class WFC {
         const patterns = this.getCompatiblePatterns(nextCoord);
         if (patterns.length === 0) {
             console.log("No more matching patterns");
+            this.halted = true;
             return;
         }
 
@@ -114,18 +123,30 @@ export default class WFC {
     }
 
     countPatterns(): Pattern[] {
-        const patterns: Pattern[] = [];
+        const allPatterns: Pattern[] = [];
         for (let x = 0; x < this.image.width; x++) {
             for (let y = 0; y < this.image.height; y++) {
-                const pattern = this.getPattern(x, y);
-                if (!patterns.some((it) => _.isEqual(it, pattern))) {
-                    patterns.push(pattern);
-                }
+                const originalPattern = this.getPattern(x, y);
+
                 // Flip, rotate patterns.
+                const variations = [originalPattern];
+                variations.push(reflect(originalPattern, this.n));
+                variations.push(rotate(originalPattern, this.n));
+                variations.push(reflect(variations[2], this.n));
+                variations.push(rotate(variations[2], this.n));
+                variations.push(reflect(variations[4], this.n));
+                variations.push(rotate(variations[4], this.n));
+                variations.push(reflect(variations[6], this.n));
+
+                for (const variation of variations) {
+                    if (!allPatterns.some((it) => _.isEqual(it, variation))) {
+                        allPatterns.push(variation);
+                    }
+                }
             }
         }
 
-        return patterns;
+        return allPatterns;
     }
 
     getPattern(x: number, y: number): Pattern {
